@@ -1,0 +1,516 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background-rgb: 255 255 255; /* Fondo principal */
+        --foreground-rgb: 0 0 0; /* Color del texto */
+
+        --card-rgb: 255 255 255; /* Fondo de las tarjetas */
+        --card-foreground-rgb: 0 0 0; /* Texto en las tarjetas */
+
+        --popover-rgb: 255 255 255; /* Fondo de popovers */
+        --popover-foreground-rgb: 0 0 0; /* Texto en popovers */
+
+        --primary-rgb: 34 193 34; /* Color principal verde */
+        --primary-foreground-rgb: 255 255 255; /* Color de texto sobre el color principal */
+
+        --secondary-rgb: 85 239 196; /* Color secundario verde claro */
+        --secondary-foreground-rgb: 21 21 21; /* Texto sobre el color secundario */
+
+        --muted-rgb: 237 247 237; /* Color de fondo sutil verde muy claro */
+        --muted-foreground-rgb: 85 139 85; /* Texto en fondos sutiles */
+
+        --accent-rgb: 51 153 51; /* Color de acento verde medio */
+        --accent-foreground-rgb: 255 255 255; /* Texto sobre el color de acento */
+
+        --destructive-rgb: 255 0 0; /* Color destructivo (rojo) */
+        --destructive-foreground-rgb: 255 255 255; /* Texto sobre el color destructivo */
+
+        --border: 200 255 200; /* Color del borde verde muy claro */
+        --input: 240 255 240; /* Color del campo de entrada verde muy claro */
+        --ring: 34 193 34; /* Color del anillo verde */
+
+        --radius: 0.5rem; 
+
+        --ipad-scale: 1.29;
+        --ipad-text-scale: 1;
+        --ipad-width: 484px;
+        --ipad-height: 740px;
+        --ipad-border: 19.35px;
+        --ipad-x: 0;
+        --ipad-y: 80px;
+        --ipad-ratio: 0.635;
+    }
+
+    .dark {
+        --background-rgb: 15 15 15; /* Fondo oscuro */
+        --foreground-rgb: 255 255 255; /* Texto claro */
+
+        --card-rgb: 15 15 15; /* Fondo oscuro de las tarjetas */
+        --card-foreground-rgb: 255 255 255; /* Texto en tarjetas oscuras */
+
+        --popover-rgb: 255 255 255; /* Fondo de popovers claro */
+        --popover-foreground-rgb: 15 15 15; /* Texto en popovers oscuros */
+
+        --primary-rgb: 34 193 34; /* Color principal verde en modo oscuro */
+        --primary-foreground-rgb: 255 255 255; /* Texto sobre el color principal en modo oscuro */
+
+        --secondary-rgb: 85 239 196; /* Color secundario verde claro en modo oscuro */
+        --secondary-foreground-rgb: 255 255 255; /* Texto sobre el color secundario en modo oscuro */
+
+        --muted-rgb: 38 38 38; /* Color de fondo sutil en modo oscuro */
+        --muted-foreground-rgb: 163 163 163; /* Texto en fondos sutiles en modo oscuro */
+
+        --accent-rgb: 38 38 38; /* Color de acento en modo oscuro */
+        --accent-foreground-rgb: 255 255 255; /* Texto sobre el color de acento en modo oscuro */
+
+        --destructive-rgb: 174 69 97; /* Color destructivo en modo oscuro */
+        --destructive-foreground-rgb: 255 255 255; /* Texto sobre el color destructivo en modo oscuro */
+
+        --border: 38 38 38; /* Color del borde en modo oscuro */
+        --input: 38 38 38; /* Color del campo de entrada en modo oscuro */
+        --ring: 34 193 34; /* Color del anillo verde en modo oscuro */
+    }
+
+    
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+    background-attachment: fixed;
+    min-height: 100%;
+    scrollbar-width: none;
+}
+
+*:hover {
+    cursor: url('/cursor.png'), auto;
+}
+
+textarea {
+    resize: none;
+    field-sizing: content;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #fb8d02;
+    border-radius: 10px;
+}
+
+#header-nav {
+    animation: blur both;
+    animation-timeline: scroll();
+    animation-range: 0 500px;
+}
+
+.fondo {
+    background-image: url(/fondo.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+
+    &:before {
+        content: '';
+        background: linear-gradient(to bottom right, #fb8d02, #09a323);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        opacity: 0.6; /* Ajusta la opacidad */
+        z-index: -1;
+        filter: blur(8px); /* Añade desenfoque */
+    }
+}
+
+.fondo-anfora {
+    background-image: url(/fondo-anfora.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.fondo-prueba::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #4c0253, #4b0d54);
+    z-index: 0;
+    position: absolute;
+    opacity: 0.8;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+button[role='combobox'] {
+    span {
+        margin: auto;
+    }
+}
+
+@keyframes blur {
+    to {
+        box-shadow: 0px 5px 50px -5px rgba(51, 51, 51, 0.1), 0px 0px 0 1px rgba(227, 227, 227, 0.3);
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        max-width: 720px;
+        border-radius: 100px;
+        padding: 0 1.5rem;
+        inset-inline: 40px;
+    }
+}
+
+.btn {
+    color: #9104a4;
+    text-decoration: none;
+    padding: 0.5rem;
+    border: 2px solid #9104a4;
+    border-radius: 10rem;
+    transition: all 300ms ease-in-out;
+    box-shadow: 0 0.6em #bd15d3, 0 0.9em rgba(199, 65, 252, 0.4);
+}
+
+.btn:hover {
+    background: #9104a4;
+    color: #ffffff;
+}
+
+.btn.b-1:hover {
+    top: 0.2em;
+    box-shadow: 0 0.4em #bd15d3, 0 0.7em rgba(199, 65, 252, 0.4);
+}
+
+.btn.b-1:active {
+    top: 0.4em;
+    box-shadow: 0 0.2em #bd15d3, 0 0.5em rgba(199, 65, 252, 0.4);
+}
+
+.ipad {
+    position: fixed;
+    top: var(--ipad-y);
+    left: 0;
+    right: var(--ipad-x);
+    margin: auto;
+    z-index: 15;
+    width: var(--ipad-width);
+    height: var(--ipad-height);
+    visibility: visible;
+    transform-origin: bottom center;
+    transform: translate3d(0, 110%, 0) rotate(75deg);
+}
+
+.ipad.visible {
+    transition: transform 0.92s cubic-bezier(0.245, 1.315, 0.25, 0.97);
+    transform: translateZ(0);
+}
+
+.ipad.invisible {
+    transition: transform 0.7s cubic-bezier(1, -0.235, 0.525, 0.905);
+    transform: translate3d(0, 180%, 0) rotate(75deg);
+}
+
+.ipad-case {
+    --case-top-color: #585858;
+    --case-bottom-color: #353535;
+
+    --case-border: calc(var(--ipad-border) * -1);
+    position: absolute;
+    top: var(--case-border);
+    right: var(--case-border);
+    bottom: var(--case-border);
+    left: var(--case-border);
+    z-index: 1;
+}
+
+.ipad-case::before,
+.ipad-case::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    border-radius: calc(45px * var(--ipad-scale));
+}
+
+.ipad-case::before {
+    z-index: 0;
+    background: var(--case-bottom-color);
+    box-shadow: 0 0 20px 20px #0000000d;
+    transform: translate(calc(-8px * var(--ipad-scale)), calc(6px * var(--ipad-scale)));
+}
+
+.ipad-case::after {
+    z-index: 1;
+    background: var(--case-top-color);
+}
+
+.finger-1 svg,
+.finger-2 svg,
+.thumb-1 svg,
+.thumb-2 svg {
+    position: absolute;
+    color: #e7ac93;
+}
+
+.finger-1 svg {
+    top: 5%;
+    right: -19.2%;
+    z-index: 0;
+    width: calc(105px * var(--ipad-scale));
+    height: calc(154px * var(--ipad-scale));
+}
+
+.finger-2 svg {
+    top: 30%;
+    right: -19.3%;
+    z-index: 3;
+    width: calc(99px * var(--ipad-scale));
+    height: calc(331px * var(--ipad-scale));
+    filter: drop-shadow(0 15px 5px rgba(0, 0, 0, 0.1));
+}
+
+.thumb-1 svg {
+    top: 30%;
+    left: -30.2%;
+    z-index: 3;
+    width: calc(180px * var(--ipad-scale));
+    height: calc(192px * var(--ipad-scale));
+    filter: drop-shadow(10px -10px 5px rgba(0, 0, 0, 0.1));
+    transform-origin: bottom center;
+}
+
+.thumb-2 svg {
+    top: 38%;
+    left: -37.2%;
+    z-index: 0;
+    width: calc(290px * var(--ipad-scale));
+    height: calc(328px * var(--ipad-scale));
+    transform-origin: bottom center;
+}
+
+.wrist {
+    color: #fff;
+    background-color: #fff;
+    position: absolute;
+    top: 70%;
+    left: -15.2%;
+    z-index: 0;
+    width: calc(250px * var(--ipad-scale));
+    height: calc(600px * var(--ipad-scale));
+    background-color: #fff;
+    background-image: radial-gradient(45.02% 39.83% at 86.78% 32.14%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(25deg);
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: calc(30px * var(--ipad-scale));
+}
+
+.word-wrapper {
+    overflow: hidden;
+}
+
+.word-wrapper .word1,
+.word-wrapper .word2,
+.word-wrapper .word3 {
+    display: inline-block;
+    transform: translateY(35px);
+}
+
+.word1.anim1Word1 {
+    animation: anim1Word1 0.5s both;
+}
+
+.word1.anim2Word1 {
+    animation: anim2Word1 0.5s both;
+}
+
+.word2.anim1Word2 {
+    animation: anim1Word1 1.5s both;
+}
+
+.word2.anim2Word2 {
+    animation: anim2Word1 1.5s both;
+}
+
+.word3.anim1Word3 {
+    animation: anim1Word1 2.2s both;
+}
+
+.word3.anim2Word3 {
+    animation: anim2Word1 2.2s both;
+}
+
+@keyframes anim1Word1 {
+    from {
+        transform: translateY(35px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes anim2Word1 {
+    from {
+        transform: translateY(0px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(35px);
+        opacity: 1;
+    }
+}
+
+.loader {
+    width: 35px;
+    padding: 8px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    opacity: 0.4;
+    background: white;
+    --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+    -webkit-mask: var(--_m);
+    mask: var(--_m);
+    -webkit-mask-composite: source-out;
+    mask-composite: subtract;
+    animation: l3 1s infinite linear;
+    display: inline-block;
+}
+
+.text-wissen-gradient {
+    background: linear-gradient(to right, #924c8e, #ea1f1f, #f99c1a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+@keyframes l3 {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* @media (max-width: 540px) and (max-width: 1180px) {
+    :root {
+        --ipad-width: 410px;
+        --ipad-height: 680px;
+    }
+}
+
+@media (max-height: 544px) and (max-width: 1180px) {
+    :root {
+        --ipad-y: 35px;
+        --ipad-width: 370px;
+        --ipad-height: 500px;
+    }
+}
+
+@media (min-height: 544px) and (max-height: 900px) and (max-width: 1180px) {
+    :root {
+        --ipad-y: 35px;
+        --ipad-width: 420px;
+        --ipad-height: 620px;
+    }
+}
+
+@media (min-height: 900px) and (max-height: 1070px) and (max-width: 1180px) {
+    :root {
+        --ipad-y: 140px;
+    }
+} */
+
+/* iPhone XR - Vertical */
+@media (min-device-width: 200px) and (max-device-width: 414px) and (min-device-height: 414px) and (max-device-height: 1102px) and (orientation: portrait) {
+    :root {
+        --ipad-y: 140px;
+        --ipad-width: 360px;
+        --ipad-height: 620px;
+    }
+
+    .thumb-1 svg {
+        width: calc(120px * var(--ipad-scale));
+        height: calc(172px * var(--ipad-scale));
+    }
+}
+@media (min-device-width: 414px) and (max-device-width: 515px) and (min-device-height: 414px) and (max-device-height: 1102px) and (orientation: portrait) {
+    :root {
+        --ipad-y: 140px;
+        --ipad-width: 405px;
+        --ipad-height: 640px;
+    }
+}
+@media (min-device-width: 515px) and (max-device-width: 425px) and (min-device-height: 414px) and (max-device-height: 1102px) and (orientation: portrait) {
+    :root {
+        --ipad-y: 140px;
+        --ipad-width: 410px;
+        --ipad-height: 680px;
+    }
+}
+
+/* iPhone XR - Horizontal */
+@media (min-device-width: 896px) and (max-device-width: 896px) and (min-device-height: 414px) and (max-device-height: 414px) and (orientation: landscape) {
+    :root {
+        --ipad-y: -10px;
+        --ipad-width: 380px;
+        --ipad-height: 480px;
+    }
+
+    .screen div:nth-child(2) {
+        transform: translateY(1rem);
+    }
+
+    .screen div:nth-child(3) {
+        transform: translateY(2rem);
+    }
+
+    .screen .show-reading {
+        transform: translateY(-360px) !important;
+    }
+}
+
+/* iPad Air - Vertical */
+@media (min-device-width: 820px) and (max-device-width: 820px) and (min-device-height: 1180px) and (max-device-height: 1180px) and (orientation: portrait) {
+    :root {
+        --ipad-y: 240px;
+    }
+}
+
+/* iPad Air - Horizontal */
+@media (min-device-width: 1180px) and (max-device-width: 1180px) and (min-device-height: 820px) and (max-device-height: 820px) and (orientation: landscape) {
+    :root {
+        --ipad-y: 50px;
+    }
+}

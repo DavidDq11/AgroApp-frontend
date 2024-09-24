@@ -1,6 +1,6 @@
 'use client'
 
-import { Usuario } from '@/types/MyTypes'
+import { Usuario } from '../../types/MyTypes'
 import React, { createContext, useContext, useState } from 'react'
 
 interface AppContextType {

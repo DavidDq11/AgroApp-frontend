@@ -1,6 +1,6 @@
 'use client'
 
-import { Stars } from '@/components/Stars'
+import { Stars } from '../components/Stars'
 import { Canvas } from '@react-three/fiber'
 
 export default function BackgroundStars() {

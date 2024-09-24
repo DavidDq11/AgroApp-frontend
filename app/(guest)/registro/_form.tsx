@@ -128,7 +128,14 @@ export default function RegistrationForm() {
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {error && <small className="text-red-500">{error}</small>}
-                {successMessage && <small className="text-green-500">{successMessage}</small>} {/* Mensaje de éxito */}
+                {successMessage && (
+                <div className="flex items-center p-4 mt-2 text-green-700 bg-green-100 border border-green-300 rounded-lg shadow-md transition-opacity duration-500">
+                    <svg className="w-6 h-6 mr-2 text-green-700" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm1.293-11.293a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1-1.414 1.414L11 9.414l-1.293 1.293a1 1 0 0 1-1.414-1.414l2-2z" clipRule="evenodd" />
+                    </svg>
+                    <span>{successMessage}</span>
+                </div>
+            )}
                 <button
                     type="submit"
                     className="bg-green-700 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-green-600 hover:shadow-xl transition duration-300 transform hover:-translate-y-1 active:translate-y-0.5 font-semibold cursor-pointer tracking-wider"

@@ -32,18 +32,36 @@ export default function LoginForm() {
         })
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-        // Validar el correo y la contraseña quemados
-        if (formData.email === hardcodedUser.email && formData.password === hardcodedUser.password) {
-            console.log('✅ Ingreso exitoso')
-            setError(null) // Limpia el error
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_NESTJS_API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('token', data.access_token);
+            toast({
+                title: 'Login exitoso',
+                description: 'Has ingresado correctamente',
+            });
+            router.push(HOME_ROUTE);
         } else {
-            console.log('❌ Correo o contraseña incorrectos')
-            setError('Correo o contraseña incorrectos')
+            console.error('Login error response:', data);
+            setError(data.message || 'Correo o contraseña incorrectos');
         }
+    } catch (error) {
+        console.error('Error en el login:', error);
+        setError('Hubo un problema al iniciar sesión, intenta nuevamente');
     }
+};
 
     return (
         <>

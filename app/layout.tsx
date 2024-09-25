@@ -40,6 +40,11 @@ export default function RootLayout({
         <html
             lang="es"
             suppressHydrationWarning>
+                <head>
+                {/* Añade el favicon.ico aquí */}
+                <link rel="icon" href="/favicon-2.ico" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+            </head>
             <body className={cn('min-h-screen bg-background antialiased', eduFont.variable)}>
                 <AppProvider>
                     <ThemeProvider

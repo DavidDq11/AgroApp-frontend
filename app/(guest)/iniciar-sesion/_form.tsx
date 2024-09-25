@@ -4,7 +4,7 @@ import { useForm } from '../../../hooks/useForm'
 import { getErrorsForFields, transformErrors } from '../../../lib/actions'
 import { Login } from '../../../types/MyTypes'
 import { useRouter } from 'next/navigation'
-import { MUNDOS_ROUTE } from '../../../utils/routes'
+import { MUNDOS_ROUTE, PANTALLA_INICIO } from '../../../utils/routes'
 import { HOME_ROUTE } from '../../../utils/routes'
 import { REGISTER_ROUTE } from '../../../utils/routes'
 import { Button } from '../../../components/ui/button'
@@ -52,7 +52,7 @@ export default function LoginForm() {
                 title: 'Login exitoso',
                 description: 'Has ingresado correctamente',
             });
-            router.push(HOME_ROUTE);
+            router.push(PANTALLA_INICIO);
         } else {
             console.error('Login error response:', data);
             setError(data.message || 'Correo o contraseña incorrectos');

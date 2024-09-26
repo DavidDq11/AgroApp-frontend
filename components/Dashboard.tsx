@@ -20,7 +20,7 @@ const Dashboard = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
 
-        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL ;
 
         if (!token) {
             router.push('/iniciar-sesion'); // Redirigir si no hay token

@@ -35,7 +35,7 @@ export default function RegistrationForm() {
             return;
         }
 
-        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
 
         try {
             // Realizar la petición al backend

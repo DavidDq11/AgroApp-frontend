@@ -28,7 +28,7 @@ export default function LoginForm() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
 
         try {
             const response = await fetch(`${API_URL}/auth/login`, {

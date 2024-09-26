@@ -1,13 +1,9 @@
 'use client';
 
-import { useForm } from '../../../hooks/useForm';
-import { Login } from '../../../types/MyTypes';
-import { useRouter } from 'next/navigation';
-import { MUNDOS_ROUTE, PANTALLA_INICIO } from '../../../utils/routes';
-import { HOME_ROUTE } from '../../../utils/routes';
-import { REGISTER_ROUTE } from '../../../utils/routes';
-import { Button } from '../../../components/ui/button';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PANTALLA_INICIO, HOME_ROUTE, REGISTER_ROUTE } from '../../../utils/routes';
+import { Button } from '../../../components/ui/button';
 import { toast } from '../../../components/ui/use-toast';
 import Link from 'next/link';
 
@@ -49,12 +45,13 @@ export default function LoginForm() {
                 });
                 router.push(PANTALLA_INICIO);
             } else {
-                console.error('Login error response:', data);
-                setError(data.message || 'Correo o contraseña incorrectos');
+                const errorMessage = data.message || 'Correo o contraseña incorrectos';
+                console.error('Login error response:', errorMessage);
+                setError(errorMessage);
             }
         } catch (error) {
             console.error('Error en el login:', error);
-            setError('Hubo un problema al iniciar sesión, intenta nuevamente');
+            setError('No se pudo conectar al servidor. Intenta nuevamente más tarde.');
         }
     };
 

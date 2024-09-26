@@ -20,11 +20,13 @@ const Dashboard = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
 
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+
         if (!token) {
             router.push('/iniciar-sesion'); // Redirigir si no hay token
         } else {
             // Aquí puedes hacer una solicitud para obtener los datos del usuario
-            fetch(`${process.env.NEXT_PUBLIC_NESTJS_API_URL}/auth/profile`, {
+            fetch(`${API_URL}/auth/profile`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

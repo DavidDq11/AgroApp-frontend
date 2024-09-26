@@ -35,9 +35,11 @@ export default function RegistrationForm() {
             return;
         }
 
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+
         try {
             // Realizar la petición al backend
-            const response = await fetch(`${process.env.NEXT_PUBLIC_NESTJS_API_URL}/users`, {
+            const response = await fetch(`${API_URL}/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

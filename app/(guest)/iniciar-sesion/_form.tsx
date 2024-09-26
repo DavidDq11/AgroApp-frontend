@@ -1,72 +1,66 @@
-'use client'
+'use client';
 
-import { useForm } from '../../../hooks/useForm'
-import { Login } from '../../../types/MyTypes'
-import { useRouter } from 'next/navigation'
-import { MUNDOS_ROUTE, PANTALLA_INICIO } from '../../../utils/routes'
-import { HOME_ROUTE } from '../../../utils/routes'
-import { REGISTER_ROUTE } from '../../../utils/routes'
-import { Button } from '../../../components/ui/button'
-import { useState } from 'react'
-import { toast } from '../../../components/ui/use-toast'
+import { useForm } from '../../../hooks/useForm';
+import { Login } from '../../../types/MyTypes';
+import { useRouter } from 'next/navigation';
+import { MUNDOS_ROUTE, PANTALLA_INICIO } from '../../../utils/routes';
+import { HOME_ROUTE } from '../../../utils/routes';
+import { REGISTER_ROUTE } from '../../../utils/routes';
+import { Button } from '../../../components/ui/button';
+import { useState } from 'react';
+import { toast } from '../../../components/ui/use-toast';
 import Link from 'next/link';
 
-
 export default function LoginForm() {
-    const [formData, setFormData] = useState({ email: '', password: '' })
-    const [error, setError] = useState<string | null>(null)
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [error, setError] = useState<string | null>(null);
     
-    const router = useRouter()
+    const router = useRouter();
 
-    // Usuario y contraseña quemados
-    const hardcodedUser = {
-        email: 'prueba@gmail.com',
-        password: '123456'
-    }
-
+    // Manejo de cambio en los inputs
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
-        })
-    }
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+        event.preventDefault();
 
-    const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001';
 
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem('token', data.access_token);
-            toast({
-                title: 'Login exitoso',
-                description: 'Has ingresado correctamente',
+        try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
             });
-            router.push(PANTALLA_INICIO);
-        } else {
-            console.error('Login error response:', data);
-            setError(data.message || 'Correo o contraseña incorrectos');
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('token', data.access_token);
+                toast({
+                    title: 'Login exitoso',
+                    description: 'Has ingresado correctamente',
+                });
+                router.push(PANTALLA_INICIO);
+            } else {
+                console.error('Login error response:', data);
+                setError(data.message || 'Correo o contraseña incorrectos');
+            }
+        } catch (error) {
+            console.error('Error en el login:', error);
+            setError('Hubo un problema al iniciar sesión, intenta nuevamente');
         }
-    } catch (error) {
-        console.error('Error en el login:', error);
-        setError('Hubo un problema al iniciar sesión, intenta nuevamente');
-    }
-};
+    };
 
     return (
         <>
-        <Link 
+            <Link 
                 href={HOME_ROUTE}
                 className="
                     absolute top-4 left-4
@@ -82,81 +76,80 @@ export default function LoginForm() {
             >
                 Inicio
             </Link>
-        <form className="flex flex-col gap-y-6 w-9/12 sm:w-5/12" onSubmit={handleSubmit}>
-            <div>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Correo electrónico"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                />
-                {error && <small className="text-red-500">{error}</small>}
-            </div>
+            <form className="flex flex-col gap-y-6 w-9/12 sm:w-5/12" onSubmit={handleSubmit}>
+                <div>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Correo electrónico"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                    />
+                    {error && <small className="text-red-500">{error}</small>}
+                </div>
 
-            <div>
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Contraseña"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4" 
-                />
-            </div>            
-            <button
-                type="submit"
-                className="
-                bg-green-700  /* Fondo verde oscuro */
-                text-white  /* Texto blanco */
-                py-2 px-6  /* Padding interno en eje Y y X */
-                rounded-lg  /* Bordes redondeados */
-                shadow-lg  /* Sombra grande */
-                hover:bg-green-600  /* Fondo verde más claro al pasar el cursor */
-                hover:shadow-xl  /* Sombra más intensa al pasar el cursor */
-                transition  /* Suaviza las transiciones */
-                duration-300  /* Duración de la transición */
-                transform  /* Habilita transformaciones */
-                hover:-translate-y-1  /* Eleva ligeramente el botón al hacer hover */
-                active:translate-y-0.5  /* Baja el botón ligeramente cuando se presiona */
-                font-semibold  /* Hace el texto un poco más grueso */
-                cursor-pointer  /* Cambia el cursor a mano */
-                tracking-wider  /* Espacia un poco más las letras */
-                "
-            >
-            Ingresar
-            </button>
-            
-            <Link
-                type="submit"
-                href={REGISTER_ROUTE}
-                className="
-                bg-green-700  /* Fondo verde oscuro */
-                text-white  /* Texto blanco */
-                py-2 px-6  /* Padding interno en eje Y y X */
-                rounded-lg  /* Bordes redondeados */
-                shadow-lg  /* Sombra grande */
-                hover:bg-green-600  /* Fondo verde más claro al pasar el cursor */
-                hover:shadow-xl  /* Sombra más intensa al pasar el cursor */
-                transition  /* Suaviza las transiciones */
-                duration-300  /* Duración de la transición */
-                transform  /* Habilita transformaciones */
-                hover:-translate-y-1  /* Eleva ligeramente el botón al hacer hover */
-                active:translate-y-0.5  /* Baja el botón ligeramente cuando se presiona */
-                font-semibold  /* Hace el texto un poco más grueso */
-                cursor-pointer  /* Cambia el cursor a mano */
-                tracking-wider  /* Espacia un poco más las letras */
-                flex items-center justify-center  /* Añade estas clases */
-                text-center  /* Añade esta clase */
-                w-full  /* Añade esta clase para que ocupe todo el ancho disponible */
-                "
-            >
-                Registrarse
-            </Link>
-        </form>
+                <div>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Contraseña"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4" 
+                    />
+                </div>            
+                <Button
+                    type="submit"
+                    className="
+                        bg-green-700
+                        text-white
+                        py-2 px-6
+                        rounded-lg
+                        shadow-lg
+                        hover:bg-green-600
+                        hover:shadow-xl
+                        transition
+                        duration-300
+                        transform
+                        hover:-translate-y-1
+                        active:translate-y-0.5
+                        font-semibold
+                        cursor-pointer
+                        tracking-wider
+                    "
+                >
+                    Ingresar
+                </Button>
+
+                <Link
+                    href={REGISTER_ROUTE}
+                    className="
+                        bg-green-700
+                        text-white
+                        py-2 px-6
+                        rounded-lg
+                        shadow-lg
+                        hover:bg-green-600
+                        hover:shadow-xl
+                        transition
+                        duration-300
+                        transform
+                        hover:-translate-y-1
+                        active:translate-y-0.5
+                        font-semibold
+                        cursor-pointer
+                        tracking-wider
+                        flex items-center justify-center
+                        text-center
+                        w-full
+                    "
+                >
+                    Registrarse
+                </Link>
+            </form>
         </>
-    )
+    );
 }

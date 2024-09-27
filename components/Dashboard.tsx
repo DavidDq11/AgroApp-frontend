@@ -21,7 +21,7 @@ const Dashboard = () => {
     const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
 
     if (!token) {
-      router.push('/iniciar-sesion');
+      router.push('/');
     } else {
       fetch(`${API_URL}/auth/profile`, {
         method: 'GET',
@@ -37,7 +37,7 @@ const Dashboard = () => {
       .catch(error => {
         console.error('Error fetching user:', error);
         localStorage.removeItem('token');
-        router.push('/iniciar-sesion');
+        router.push('/');
       });
     }
   }, [router]);

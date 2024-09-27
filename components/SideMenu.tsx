@@ -1,5 +1,9 @@
+'use client';
+
 import React from 'react';
 import { X, Home, Leaf, Settings, BarChart2, Share, LogOut, PlusCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from './ui/use-toast';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -8,6 +12,27 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, user }) => {
+
+    const router = useRouter(); // Hook para la navegación
+
+  const handleLogout = () => {
+  // Eliminar token del localStorage
+  localStorage.removeItem('token');
+  
+  // Mostrar una notificación de éxito
+  toast({
+    title: 'Cierre de sesión exitoso',
+    description: 'Has cerrado sesión correctamente',
+  });
+
+  // Redirigir a la página de inicio
+  router.push('/');
+
+  // Forzar recarga de la página
+  window.location.reload();
+};
+
+
   const menuItems = [
     { icon: <Home size={20} />, label: 'Home', href: '/dashboard' },
     { icon: <Leaf size={20} />, label: 'Mis Cultivos', href: '/cultivos' },
@@ -55,7 +80,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, user }) => {
           </div>
           <div className="mt-auto p-4">
             <button 
-              onClick={() => {/* Implement logout logic */}} 
+              onClick={handleLogout} 
               className="flex items-center text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg p-2 w-full transition-colors duration-200"
             >
               <LogOut size={20} />

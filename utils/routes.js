@@ -3,6 +3,7 @@ export const SUBFOLDER_ROUTE = '/juego'
 export const LOGIN_ROUTE = '/iniciar-sesion'
 export const REGISTER_ROUTE = '/registro'
 export const PANTALLA_INICIO = '/dashboard'
+export const MIS_CULTIVOS = '/misCultivos'
 export const INTRODUCCION_ROUTE = `${SUBFOLDER_ROUTE}/introduccion`
 export const MAPA_ROUTE = `${SUBFOLDER_ROUTE}/mapa`
 export const ANFORA_ROUTE = `${SUBFOLDER_ROUTE}/anfora`

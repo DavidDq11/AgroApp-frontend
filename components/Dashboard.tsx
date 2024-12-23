@@ -15,32 +15,44 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const router = useRouter();
+  
+  const useMock = true; // Cambia a 'false' si deseas usar el backend real
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
 
     if (!token) {
       router.push('/');
     } else {
-      fetch(`${API_URL}/auth/profile`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        setUser(data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching user:', error);
-        localStorage.removeItem('token');
-        router.push('/');
-      });
+      if (useMock) {
+        // Simulación de los datos del usuario
+        setTimeout(() => {
+          const mockUser = { name: 'Juan Pérez', email: 'juan.perez@example.com' };  // Simulando los datos del usuario
+          setUser(mockUser);
+          setLoading(false); // Se puede quitar el estado de carga
+        }, 1000); // Simula un pequeño delay
+      } else {
+        // Si no estamos usando datos mock, hacer la solicitud al backend
+        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
+        fetch(`${API_URL}/auth/profile`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            setUser(data);
+            setLoading(false);
+          })
+          .catch(error => {
+            console.error('Error fetching user:', error);
+            localStorage.removeItem('token');
+            router.push('/');
+          });
+      }
     }
-  }, [router]);
+  }, [router, useMock]);
 
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
@@ -76,14 +88,8 @@ const Dashboard = () => {
                 Añadir Nuevo
               </button>
             </div>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-semibold text-gray-800">Tus Invernaderos2</h3>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300">
-                Añadir Nuevo
-              </button>
-            </div>
 
-            {/* Placeholder for greenhouse data */}
+            {/* Placeholder para los invernaderos */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((_, index) => (
                 <div key={index} className="bg-green-50 p-6 rounded-lg">

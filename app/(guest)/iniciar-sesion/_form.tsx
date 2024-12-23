@@ -10,8 +10,10 @@ import Link from 'next/link';
 export default function LoginForm() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState<string | null>(null);
-    
+    const [loading, setLoading] = useState(false); // Indicador de carga
     const router = useRouter();
+
+    const useMock = true; // Cambia a 'false' para usar el backend real
 
     // Manejo de cambio en los inputs
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,10 +25,28 @@ export default function LoginForm() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true); // Mostrar el estado de carga
 
-        const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
+        if (useMock) {
+            // Simulación de respuesta del backend
+            const mockResponse = {
+                access_token: 'mock-token',
+            };
+
+            setTimeout(() => {
+                localStorage.setItem('token', mockResponse.access_token);
+                toast({
+                    title: 'Login exitoso',
+                    description: 'Has ingresado correctamente (Mock Data)',
+                });
+                setLoading(false); // Ocultar el estado de carga
+                router.push(PANTALLA_INICIO);
+            }, 1000); // Simula un pequeño delay
+            return;
+        }
 
         try {
+            const API_URL = process.env.NEXT_PUBLIC_NESTJS_API_URL;
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
@@ -46,18 +66,19 @@ export default function LoginForm() {
                 router.push(PANTALLA_INICIO);
             } else {
                 const errorMessage = data.message || 'Correo o contraseña incorrectos';
-                console.error('Login error response:', errorMessage);
                 setError(errorMessage);
             }
         } catch (error) {
             console.error('Error en el login:', error);
             setError('No se pudo conectar al servidor. Intenta nuevamente más tarde.');
+        } finally {
+            setLoading(false); // Ocultar el estado de carga
         }
     };
 
     return (
         <>
-            <Link 
+            <Link
                 href={HOME_ROUTE}
                 className="
                     absolute top-4 left-4
@@ -82,7 +103,7 @@ export default function LoginForm() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {error && <small className="text-red-500">{error}</small>}
                 </div>
@@ -95,31 +116,50 @@ export default function LoginForm() {
                         value={formData.password}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4" 
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                     />
-                </div>            
-                <Button
-                    type="submit"
-                    className="
-                        bg-green-700
-                        text-white
-                        py-2 px-6
-                        rounded-lg
-                        shadow-lg
-                        hover:bg-green-600
-                        hover:shadow-xl
-                        transition
-                        duration-300
-                        transform
-                        hover:-translate-y-1
-                        active:translate-y-0.5
-                        font-semibold
-                        cursor-pointer
-                        tracking-wider
-                    "
-                >
-                    Ingresar
-                </Button>
+                </div>
+                {loading ? (
+                    <Button
+                        type="button"
+                        disabled
+                        className="
+                            bg-gray-500
+                            text-white
+                            py-2 px-6
+                            rounded-lg
+                            shadow-lg
+                            cursor-not-allowed
+                            font-semibold
+                            tracking-wider
+                        "
+                    >
+                        Cargando...
+                    </Button>
+                ) : (
+                    <Button
+                        type="submit"
+                        className="
+                            bg-green-700
+                            text-white
+                            py-2 px-6
+                            rounded-lg
+                            shadow-lg
+                            hover:bg-green-600
+                            hover:shadow-xl
+                            transition
+                            duration-300
+                            transform
+                            hover:-translate-y-1
+                            active:translate-y-0.5
+                            font-semibold
+                            cursor-pointer
+                            tracking-wider
+                        "
+                    >
+                        Ingresar
+                    </Button>
+                )}
 
                 <Link
                     href={REGISTER_ROUTE}

@@ -93,7 +93,7 @@ body {
 }
 
 *:hover {
-    cursor: url('/cursor.png'), auto;
+    cursor: url('../public/cursor.png'), auto;
 }
 
 textarea {

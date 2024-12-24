@@ -25,13 +25,7 @@ export default function Home() {
                 <nav
                     // id="header-nav"
                     className="flex flex-1 items-center justify-around lg:ml-20 fixed inset-x-0 top-4 lg:top-0 lg:relative text-xs lg:text-lg">
-                    <Button
-                        className="text-white text-xs lg:text-lg hover:text-white/90 font-bold w-40"
-                        onClick={() => setShowContactPopup(true)}
-                        onMouseEnter={() => playSound('phoneShowed')}>
-                        Contacto
-                    </Button>
-
+                    
                     <Link
                         className="text-white hover:text-white/90 font-bold border-2 py-3 lg:py-1 px-8 rounded-full border-primary transition-all hover:bg-pylos-200/20 hover:border-primary/90"
                         href={LOGIN_ROUTE}

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SideMenu from './SideMenu';
-import { Menu } from 'lucide-react';
+import { BarChart2, Menu } from 'lucide-react';
 
 interface User {
   name: string;
@@ -100,7 +100,11 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <button className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full hover:bg-green-200 transition duration-300">
+          <button
+            className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2 hover:bg-green-200 transition duration-300"
+            onClick={() => window.location.href = '/estadisticas-cultivo'}
+          >
+            <BarChart2 size={20} />
             Ver historial y estadísticas →
           </button>
         </main>

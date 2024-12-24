@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { Calendar, Droplets, Thermometer, Plus, ChevronRight, Sun } from 'lucide-react';
-import SideMenu from './SideMenu'; // Asegúrate de importar el SideMenu
-import { Menu } from 'lucide-react';  // Asegúrate de importar el ícono Menu
+import SideMenu from './SideMenu';
+import { Menu } from 'lucide-react';
 
 
 interface Cultivo {

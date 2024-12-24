@@ -36,9 +36,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, user }) => {
   const menuItems = [
     { icon: <Home size={20} />, label: 'Home', href: '/dashboard' },
     { icon: <Leaf size={20} />, label: 'Mis Cultivos', href: '/misCultivos' },
-    { icon: <PlusCircle size={20} />, label: 'Nuevo Cultivo', href: '/nuevo-cultivo' },
     { icon: <Settings size={20} />, label: 'Green House Control', href: '/control' },
-    { icon: <BarChart2 size={20} />, label: 'Statistics', href: '/statistics' },
+    { icon: <BarChart2 size={20} />, label: 'Statistics', href: '/estadisticas-cultivo' },
     { icon: <Share size={20} />, label: 'Share', href: '/share' },
   ];
 

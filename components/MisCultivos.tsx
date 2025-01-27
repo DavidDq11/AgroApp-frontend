@@ -1,10 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, Droplets, Thermometer, Plus, ChevronRight, Sun } from 'lucide-react';
+import { Calendar, Droplets, Thermometer, Plus, ChevronRight, Sun, X } from 'lucide-react';
 import SideMenu from './SideMenu';
 import { Menu } from 'lucide-react';
+import NuevoCultivo from './ui/nuevoCultivo';
+import { Line } from 'react-chartjs-2'; // Importar para gráficos
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface Cultivo {
   id: number;
@@ -20,14 +24,18 @@ interface Cultivo {
 
 interface CultivoCardProps {
   cultivo: Cultivo;
+  onSelect: (cultivo: Cultivo) => void;
 }
 
-const CultivoCard: React.FC<CultivoCardProps> = ({ cultivo }) => (
-  <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-green-100 overflow-hidden group">
+const CultivoCard: React.FC<CultivoCardProps> = ({ cultivo, onSelect }) => (
+  <div
+    className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-green-100 overflow-hidden group transform hover:scale-105"
+    onClick={() => onSelect(cultivo)}
+  >
     <div className="p-6">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold text-green-700 mb-1 group-hover:text-green-600 transition-colors">
+          <h3 className="text-2xl font-semibold text-green-700 mb-1 group-hover:text-green-600 transition-colors">
             {cultivo.nombre}
           </h3>
           <p className="text-sm text-gray-500 flex items-center gap-2">
@@ -38,20 +46,20 @@ const CultivoCard: React.FC<CultivoCardProps> = ({ cultivo }) => (
           {cultivo.estado}
         </span>
       </div>
-      
+
       <div className="grid grid-cols-3 gap-4 mb-4">
-        <div className="bg-orange-50 rounded-lg p-3 flex flex-col items-center justify-center">
-          <Thermometer className="w-5 h-5 text-orange-500 mb-1" />
+        <div className="bg-orange-50 rounded-lg p-3 flex flex-col items-center justify-center shadow-md">
+          <Thermometer className="w-6 h-6 text-orange-500 mb-1" />
           <span className="text-sm font-medium text-orange-700">{cultivo.temperatura}°C</span>
           <span className="text-xs text-orange-500">Temperatura</span>
         </div>
-        <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center justify-center">
-          <Droplets className="w-5 h-5 text-blue-500 mb-1" />
+        <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center justify-center shadow-md">
+          <Droplets className="w-6 h-6 text-blue-500 mb-1" />
           <span className="text-sm font-medium text-blue-700">{cultivo.humedad}%</span>
           <span className="text-xs text-blue-500">Humedad</span>
         </div>
-        <div className="bg-yellow-50 rounded-lg p-3 flex flex-col items-center justify-center">
-          <Sun className="w-5 h-5 text-yellow-500 mb-1" />
+        <div className="bg-yellow-50 rounded-lg p-3 flex flex-col items-center justify-center shadow-md">
+          <Sun className="w-6 h-6 text-yellow-500 mb-1" />
           <span className="text-sm font-medium text-yellow-700">{cultivo.luminosidad}%</span>
           <span className="text-xs text-yellow-500">Luz</span>
         </div>
@@ -59,7 +67,7 @@ const CultivoCard: React.FC<CultivoCardProps> = ({ cultivo }) => (
 
       <div className="flex justify-between items-center pt-3 border-t border-green-50">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-green-500" />
+          <Calendar className="w-5 h-5 text-green-500" />
           <span className="text-sm text-green-700 font-medium">{cultivo.diasRestantes} días restantes</span>
         </div>
         <ChevronRight className="w-5 h-5 text-green-400 group-hover:text-green-500 transition-colors" />
@@ -71,10 +79,13 @@ const CultivoCard: React.FC<CultivoCardProps> = ({ cultivo }) => (
 const MisCultivos: React.FC = () => {
   const [selectedCultivo, setSelectedCultivo] = useState<Cultivo | null>(null);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [notas, setNotas] = useState<string>(''); // Estado para las notas
 
-  const toggleSideMenu = () => {
-    setIsSideMenuOpen(!isSideMenuOpen);
-  };
+  const toggleSideMenu = () => setIsSideMenuOpen(!isSideMenuOpen);
+  const abrirModal = () => setIsModalOpen(true);
+  const cerrarModal = () => setIsModalOpen(false);
+  const cerrarDetalle = () => setSelectedCultivo(null);
 
   const cultivos: Cultivo[] = [
     {
@@ -101,10 +112,39 @@ const MisCultivos: React.FC = () => {
     }
   ];
 
+  const chartData = {
+    labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'], // Simula días
+    datasets: [
+      {
+        label: 'Temperatura',
+        data: [22, 23, 24, 23, 22], // Simula temperatura
+        borderColor: 'rgba(255, 99, 132, 1)',
+        fill: false,
+      },
+      {
+        label: 'Humedad',
+        data: [60, 62, 65, 68, 70], // Simula humedad
+        borderColor: 'rgba(54, 162, 235, 1)',
+        fill: false,
+      },
+      {
+        label: 'Luminosidad',
+        data: [75, 80, 82, 85, 90], // Simula luminosidad
+        borderColor: 'rgba(255, 205, 86, 1)',
+        fill: false,
+      },
+    ],
+  };
+
+  const handleNotaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNotas(event.target.value);
+    // Aquí podrías hacer una llamada para guardar las notas (por ejemplo, en una base de datos)
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-8 flex">
       <SideMenu isOpen={isSideMenuOpen} onClose={toggleSideMenu} user={null} />
-      
+
       <div className="flex-1">
         <div className="flex justify-between items-center mb-8">
           <button onClick={toggleSideMenu} className="text-gray-600 cursor-pointer">
@@ -114,27 +154,61 @@ const MisCultivos: React.FC = () => {
             <h1 className="text-3xl font-bold text-green-700 mb-2">Mis Cultivos</h1>
             <p className="text-gray-600">Gestiona y monitorea tus cultivos activos</p>
           </div>
-          <button className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md hover:shadow-lg">
+          <button
+            className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md hover:shadow-lg"
+            onClick={abrirModal}
+          >
             <Plus className="w-5 h-5" />
             <span className="font-medium">Nuevo Cultivo</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cultivos.map((cultivo) => (
-            <CultivoCard key={cultivo.id} cultivo={cultivo} />
-          ))}
-          
-          <div className="border-2 border-dashed border-green-200 hover:border-green-400 transition-all duration-300 rounded-xl flex items-center justify-center p-8 cursor-pointer bg-white/50 hover:bg-white/80 group">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                <Plus className="w-8 h-8 text-green-500 group-hover:text-green-600" />
-              </div>
-              <p className="text-green-700 font-medium">Añadir nuevo cultivo</p>
-              <p className="text-sm text-gray-500 mt-1">Configura un nuevo cultivo</p>
+        {selectedCultivo ? (
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-green-100 transform hover:scale-105 transition-all duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-green-700">{selectedCultivo.nombre}</h2>
+              <button onClick={cerrarDetalle} className="text-gray-500 hover:text-red-500 transition">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <p><strong>Tipo:</strong> {selectedCultivo.tipo}</p>
+            <p><strong>Estado:</strong> {selectedCultivo.estado}</p>
+            <p><strong>Temperatura:</strong> {selectedCultivo.temperatura}°C</p>
+            <p><strong>Humedad:</strong> {selectedCultivo.humedad}%</p>
+            <p><strong>Luminosidad:</strong> {selectedCultivo.luminosidad}%</p>
+            <p><strong>Invernadero:</strong> {selectedCultivo.invernadero}</p>
+            <p><strong>Fecha de Siembra:</strong> {new Date().toLocaleDateString()}</p>
+            <p><strong>Fecha Estimada de Cosecha:</strong> {new Date(Date.now() + selectedCultivo.diasRestantes * 86400000).toLocaleDateString()}</p>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-green-700">Condiciones Ideales</h3>
+              <p><strong>Temperatura Ideal:</strong> 22-26°C</p>
+              <p><strong>Humedad Ideal:</strong> 60-75%</p>
+              <p><strong>Luminosidad Ideal:</strong> 70-85%</p>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-green-700">Notas del Cultivo</h3>
+              <textarea
+                className="w-full p-3 border border-green-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300"
+                placeholder="Agregar notas sobre el cultivo..."
+                value={notas}
+                onChange={handleNotaChange}
+                onBlur={handleNotaChange} // Guarda automáticamente cuando el campo pierde el foco
+              />
+            </div>
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-green-700">Evolución del Cultivo</h3>
+              <Line data={chartData} />
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cultivos.map((cultivo) => (
+              <CultivoCard key={cultivo.id} cultivo={cultivo} onSelect={setSelectedCultivo} />
+            ))}
+          </div>
+        )}
+
+        {isModalOpen && <NuevoCultivo closeModal={cerrarModal} />}
       </div>
     </div>
   );

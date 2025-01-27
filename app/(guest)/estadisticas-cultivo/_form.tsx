@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Thermometer, Droplets, Sun, RefreshCw, Menu } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Thermometer, Droplets, Sun, RefreshCw, Menu, AlertTriangle } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import SideMenu from '../../../components/SideMenu';
 
@@ -58,7 +58,7 @@ const mockCultivosStatistics = {
 
 const StatisticsModule: React.FC = () => {
   const [selectedCultivo, setSelectedCultivo] = useState<string>('Cultivo1');
-  const [statistics, setStatistics] = useState(mockCultivosStatistics[selectedCultivo]);
+  const [statistics, setStatistics] = useState(mockCultivosStatistics[selectedCultivo as keyof typeof mockCultivosStatistics]);
   const [loading, setLoading] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
@@ -70,15 +70,30 @@ const StatisticsModule: React.FC = () => {
     setLoading(true);
     setTimeout(() => {
       // Simula la carga de datos desde un API
-      setStatistics(mockCultivosStatistics[selectedCultivo]);
+      setStatistics(mockCultivosStatistics[selectedCultivo as keyof typeof mockCultivosStatistics]);
       setLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
     // Actualizar estadísticas cuando cambia el cultivo seleccionado
-    setStatistics(mockCultivosStatistics[selectedCultivo]);
+    setStatistics(mockCultivosStatistics[selectedCultivo as keyof typeof mockCultivosStatistics]);
   }, [selectedCultivo]);
+
+  // Función para calcular promedios
+  const calculateAverage = (data: { value: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    return (total / data.length).toFixed(2);
+  };
+
+  // Función para encontrar máximos y mínimos
+  const findMaxMin = (data: { value: number }[]) => {
+    const values = data.map(item => item.value);
+    return {
+      max: Math.max(...values),
+      min: Math.min(...values),
+    };
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-8 flex">
@@ -136,6 +151,11 @@ const StatisticsModule: React.FC = () => {
                 <Tooltip />
               </LineChart>
             </ResponsiveContainer>
+            <div className="mt-4">
+              <p>Promedio: {calculateAverage(statistics.temperature)}°C</p>
+              <p>Máximo: {findMaxMin(statistics.temperature).max}°C</p>
+              <p>Mínimo: {findMaxMin(statistics.temperature).min}°C</p>
+            </div>
           </div>
 
           {/* Tarjeta de Humedad */}
@@ -153,6 +173,11 @@ const StatisticsModule: React.FC = () => {
                 <Tooltip />
               </LineChart>
             </ResponsiveContainer>
+            <div className="mt-4">
+              <p>Promedio: {calculateAverage(statistics.humidity)}%</p>
+              <p>Máximo: {findMaxMin(statistics.humidity).max}%</p>
+              <p>Mínimo: {findMaxMin(statistics.humidity).min}%</p>
+            </div>
           </div>
 
           {/* Tarjeta de Luz */}
@@ -170,7 +195,105 @@ const StatisticsModule: React.FC = () => {
                 <Tooltip />
               </LineChart>
             </ResponsiveContainer>
+            <div className="mt-4">
+              <p>Promedio: {calculateAverage(statistics.light)} lx</p>
+              <p>Máximo: {findMaxMin(statistics.light).max} lx</p>
+              <p>Mínimo: {findMaxMin(statistics.light).min} lx</p>
+            </div>
           </div>
+        </div>
+
+        {/* Gráficos adicionales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {/* Gráfico de barras de temperatura */}
+          <div className="bg-orange-50 p-4 rounded-lg shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <Thermometer className="text-orange-500 w-6 h-6" />
+              <h3 className="text-lg font-semibold text-orange-700">Temperatura Histórica</h3>
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={statistics.temperature}>
+                <Bar dataKey="value" fill="#f97316" />
+                <CartesianGrid stroke="#f1f5f9" strokeDasharray="5 5" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Gráfico de barras de humedad */}
+          <div className="bg-blue-50 p-4 rounded-lg shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <Droplets className="text-blue-500 w-6 h-6" />
+              <h3 className="text-lg font-semibold text-blue-700">Humedad Histórica</h3>
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={statistics.humidity}>
+                <Bar dataKey="value" fill="#3b82f6" />
+                <CartesianGrid stroke="#f1f5f9" strokeDasharray="5 5" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Gráfico de barras de luz */}
+        <div className="bg-yellow-50 p-4 rounded-lg shadow mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Sun className="text-yellow-500 w-6 h-6" />
+            <h3 className="text-lg font-semibold text-yellow-700">Luz Histórica</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={statistics.light}>
+              <Bar dataKey="value" fill="#fbbf24" />
+              <CartesianGrid stroke="#f1f5f9" strokeDasharray="5 5" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Gráfico de área para tendencias */}
+        <div className="bg-green-50 p-4 rounded-lg shadow mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="text-green-500 w-6 h-6" />
+            <h3 className="text-lg font-semibold text-green-700">Tendencias de Temperatura</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={statistics.temperature}>
+              <Area type="monotone" dataKey="value" stroke="#34d399" fill="#bbf7d0" />
+              <CartesianGrid stroke="#f1f5f9" strokeDasharray="5 5" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Comparación entre cultivos */}
+        <div className="bg-purple-50 p-4 rounded-lg shadow mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Thermometer className="text-purple-500 w-6 h-6" />
+            <h3 className="text-lg font-semibold text-purple-700">Comparación de Temperatura entre Cultivos</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={mockCultivosStatistics.Cultivo1.temperature.map((item, index) => ({
+              day: item.day,
+              Cultivo1: item.value,
+              Cultivo2: mockCultivosStatistics.Cultivo2.temperature[index].value,
+            }))}>
+              <Line type="monotone" dataKey="Cultivo1" stroke="#8b5cf6" strokeWidth={2} />
+              <Line type="monotone" dataKey="Cultivo2" stroke="#ec4899" strokeWidth={2} />
+              <CartesianGrid stroke="#f1f5f9" strokeDasharray="5 5" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

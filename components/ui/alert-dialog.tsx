@@ -105,4 +105,5 @@ export {
     AlertDialogDescription,
     AlertDialogAction,
     AlertDialogCancel,
+    AlertDialogDescription as AlertDescription,
 }

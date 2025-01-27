@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Thermometer, Droplets, Sun, Zap, Save, Menu, RefreshCw } from 'lucide-react';
+import { Thermometer, Droplets, Sun, Zap, Save, Menu, RefreshCw, Wrench } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import SideMenu from './SideMenu';
@@ -58,6 +58,8 @@ interface SensorCardProps {
   unit: string;
   limites: SensorLimits;
   alertEnabled: boolean;
+  onToggleAlert: () => void;
+  onCalibrate: () => void;
 }
 
 const mockData: MockDataType = {
@@ -155,7 +157,16 @@ const mockData: MockDataType = {
   }
 };
 
-const SensorCard: React.FC<SensorCardProps> = ({ icon, label, value, unit, limites, alertEnabled }) => {
+const SensorCard: React.FC<SensorCardProps> = ({ 
+  icon, 
+  label, 
+  value, 
+  unit, 
+  limites, 
+  alertEnabled,
+  onToggleAlert,
+  onCalibrate
+}) => {
   const sensorKey = label.toLowerCase() as keyof CropData['historico'];
   
   return (
@@ -168,10 +179,15 @@ const SensorCard: React.FC<SensorCardProps> = ({ icon, label, value, unit, limit
             <input
               type="checkbox"
               checked={alertEnabled}
+              onChange={onToggleAlert}
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
           </label>
+          <Button onClick={onCalibrate} variant="outline" className="flex items-center gap-2">
+            <Wrench size={16} />
+            Calibrar
+          </Button>
         </div>
       </div>
       <div className="space-y-2">
@@ -228,6 +244,18 @@ const ControlSensores: React.FC = () => {
     console.log('Guardando configuración:', { cultivo, valores, alertas });
   };
 
+  const handleToggleAlert = (sensor: string) => {
+    setAlertas(prev => ({
+      ...prev,
+      [sensor]: { enabled: !prev[sensor].enabled }
+    }));
+  };
+
+  const handleCalibrate = (sensor: string) => {
+    console.log(`Calibrando sensor de ${sensor}`);
+    // Aquí puedes agregar la lógica para calibrar el sensor
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-8">
       <SideMenu isOpen={isSideMenuOpen} onClose={() => setIsSideMenuOpen(false)} user={null} />
@@ -268,6 +296,8 @@ const ControlSensores: React.FC = () => {
           unit="°C"
           limites={mockData[cultivo].limites.temperatura}
           alertEnabled={alertas.temperatura.enabled}
+          onToggleAlert={() => handleToggleAlert('temperatura')}
+          onCalibrate={() => handleCalibrate('temperatura')}
         />
         <SensorCard
           icon={<Droplets className="w-6 h-6 text-blue-500" />}
@@ -276,6 +306,8 @@ const ControlSensores: React.FC = () => {
           unit="%"
           limites={mockData[cultivo].limites.humedad}
           alertEnabled={alertas.humedad.enabled}
+          onToggleAlert={() => handleToggleAlert('humedad')}
+          onCalibrate={() => handleCalibrate('humedad')}
         />
         <SensorCard
           icon={<Sun className="w-6 h-6 text-yellow-500" />}
@@ -284,6 +316,8 @@ const ControlSensores: React.FC = () => {
           unit="%"
           limites={mockData[cultivo].limites.luminosidad}
           alertEnabled={alertas.luminosidad.enabled}
+          onToggleAlert={() => handleToggleAlert('luminosidad')}
+          onCalibrate={() => handleCalibrate('luminosidad')}
         />
         <SensorCard
           icon={<Zap className="w-6 h-6 text-purple-500" />}
@@ -292,6 +326,8 @@ const ControlSensores: React.FC = () => {
           unit=""
           limites={mockData[cultivo].limites.ph}
           alertEnabled={alertas.ph.enabled}
+          onToggleAlert={() => handleToggleAlert('ph')}
+          onCalibrate={() => handleCalibrate('ph')}
         />
         <SensorCard
           icon={<Sun className="w-6 h-6 text-green-500" />}
@@ -300,6 +336,8 @@ const ControlSensores: React.FC = () => {
           unit="mS/cm"
           limites={mockData[cultivo].limites.conductividad}
           alertEnabled={alertas.conductividad.enabled}
+          onToggleAlert={() => handleToggleAlert('conductividad')}
+          onCalibrate={() => handleCalibrate('conductividad')}
         />
       </div>
     </div>

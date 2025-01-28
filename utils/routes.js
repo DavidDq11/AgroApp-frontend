@@ -14,3 +14,4 @@ export const RESULTADOS_ROUTE = `${SUBFOLDER_ROUTE}/usuarios`
 export const MUNDOS_ROUTE = `${SUBFOLDER_ROUTE}/empezar-la-aventura`
 export const NUEVO_CULTIVO ='/nuevoCultivo'
 export const DETALLE_CULTIVO ="/detalle-cultivo"
+export const PLANIFICACION_CULTIVO ="/planificacion_cultivo"

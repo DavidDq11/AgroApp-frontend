@@ -6,6 +6,7 @@ import SideMenu from './SideMenu';
 import { BarChart2, Menu } from 'lucide-react';
 import GreenhouseCard from './ui/greenHouseCard';
 import NuevoCultivo from './ui/nuevoCultivo';
+import { ESTADISTICAS_CULTIVOS } from '../utils/routes';
 
 // Interfaz para el usuario
 interface User {
@@ -37,6 +38,10 @@ const Dashboard = () => {
   const router = useRouter();
 
   const useMock = true; // Cambia a 'false' si deseas usar el backend real
+
+  const handleVerEstadisticas = () => {
+    router.push(ESTADISTICAS_CULTIVOS); // Navega a la ruta de estadísticas
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -195,10 +200,13 @@ const Dashboard = () => {
             </div>
           )}
 
-          <button className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2 hover:bg-green-200 transition duration-300">
-            <BarChart2 size={20} />
-            Ver historial y estadísticas →
-          </button>
+<button 
+          className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2 hover:bg-green-200 transition duration-300"
+          onClick={handleVerEstadisticas} // Agrega el manejador de eventos aquí
+        >
+          <BarChart2 size={20} />
+          Ver historial y estadísticas →
+        </button>
         </main>
       </div>
 

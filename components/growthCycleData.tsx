@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Leaf, Sprout, Clock, Menu, RefreshCw, Droplets, AlertTriangle } from 'lucide-react';
+import { Calendar, Leaf, Sprout, Clock, Menu, RefreshCw, Droplets, AlertTriangle, CalendarIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { 
@@ -13,6 +13,7 @@ import {
 } from './ui/alert-dialog';
 import SideMenu from '../components/SideMenu';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import 'react-calendar/dist/Calendar.css';
 
 // Tipos mejorados
 type CultivationType = 'soil' | 'hydroponic';
@@ -109,6 +110,10 @@ const CropPlanningModule: React.FC = () => {
 
   const cropInfo = growthCycleData[selectedCrop];
   const currentStageInfo = cropInfo.stages[currentStage];
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+
+  // Función para manejar la visualización del calendario
+  const toggleCalendar = () => setShowCalendar(!showCalendar);
 
   // Generar datos de crecimiento mejorados
   const generateGrowthData = () => {
@@ -192,8 +197,8 @@ const CropPlanningModule: React.FC = () => {
           </button>
           <h1 className="text-3xl font-bold text-green-700">Planificación de Cultivos</h1>
           <div className="flex gap-2">
-            <Button variant="outline">
-              <Calendar size={20} className="mr-2" />
+          <Button variant="outline" onClick={toggleCalendar}>
+              <CalendarIcon size={20} className="mr-2" />
               Calendario
             </Button>
             <Button className="bg-green-500 hover:bg-green-600">
@@ -202,6 +207,20 @@ const CropPlanningModule: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {/* Mostrar calendario si showCalendar es true */}
+        {showCalendar && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Calendario</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="w-full">
+                <Calendar />
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Selector de cultivo */}
         <div className="flex items-center gap-4">

@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Thermometer, Droplets, Sun, Zap, Save, Menu, RefreshCw, Wrench } from 'lucide-react';
+import { Thermometer, Droplets, Sun, Zap, Save, Menu, RefreshCw, Wrench, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import SideMenu from './SideMenu';
+import { Alert, AlertDescription } from './ui/alert';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { Card } from '../components/ui/card';
 
+// Interfaces para tipos de datos
 interface SensorLimits {
   min: number;
   max: number;
@@ -60,8 +64,11 @@ interface SensorCardProps {
   alertEnabled: boolean;
   onToggleAlert: () => void;
   onCalibrate: () => void;
+  isConnected: boolean;
+  onConnect: () => void;
 }
 
+// Datos de prueba
 const mockData: MockDataType = {
   lechuga: {
     limites: {
@@ -157,6 +164,7 @@ const mockData: MockDataType = {
   }
 };
 
+// Componente SensorCard
 const SensorCard: React.FC<SensorCardProps> = ({ 
   icon, 
   label, 
@@ -165,16 +173,25 @@ const SensorCard: React.FC<SensorCardProps> = ({
   limites, 
   alertEnabled,
   onToggleAlert,
-  onCalibrate
+  onCalibrate,
+  isConnected,
+  onConnect
 }) => {
-  const sensorKey = label.toLowerCase() as keyof CropData['historico'];
-  
+  const isOutOfRange = value < limites.min || value > limites.max;
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <Card className="p-6">
       <div className="flex justify-between items-center mb-4">
         {icon}
         <div className="flex items-center gap-2">
-          <span className="font-medium">{value.toFixed(1)}{unit}</span>
+          <span className={`font-medium ${isOutOfRange ? 'text-red-500' : 'text-green-500'}`}>
+            {value.toFixed(1)}{unit}
+          </span>
+          <Button variant="ghost" onClick={onConnect} className="p-2">
+            {isConnected ? <Wifi className="w-5 h-5 text-green-500" /> : <WifiOff className="w-5 h-5 text-red-500" />}
+          </Button>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -184,29 +201,33 @@ const SensorCard: React.FC<SensorCardProps> = ({
             />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
           </label>
-          <Button onClick={onCalibrate} variant="outline" className="flex items-center gap-2">
-            <Wrench size={16} />
-            Calibrar
-          </Button>
         </div>
       </div>
+      {isOutOfRange && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>
+            El valor de {label} está fuera del rango permitido.
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Min: {limites.min}</span>
           <span>Max: {limites.max}</span>
         </div>
         <ResponsiveContainer width="100%" height={100}>
-          <LineChart data={mockData.lechuga.historico[sensorKey]}>
+          <LineChart data={mockData.lechuga.historico[label.toLowerCase() as keyof CropData['historico']]}>
             <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={2} />
             <XAxis dataKey="day" />
             <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Card>
   );
 };
 
+// Componente principal ControlSensores
 const ControlSensores: React.FC = () => {
   const [cultivo, setCultivo] = useState<string>('lechuga');
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
@@ -225,19 +246,31 @@ const ControlSensores: React.FC = () => {
     ph: { enabled: true },
     conductividad: { enabled: true }
   });
+  const [connectedSensors, setConnectedSensors] = useState<{ [key: string]: boolean }>({
+    temperatura: false,
+    humedad: false,
+    luminosidad: false,
+    ph: false,
+    conductividad: false
+  });
 
   const fetchData = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setValores({
-        temperatura: Math.random() * (25 - 20) + 20,
-        humedad: Math.random() * (70 - 60) + 60,
-        luminosidad: Math.random() * (85 - 70) + 70,
-        ph: Math.random() * (6.5 - 5.5) + 5.5,
-        conductividad: Math.random() * (1.8 - 1.2) + 1.2
-      });
+    try {
+      setTimeout(() => {
+        setValores({
+          temperatura: Math.random() * (25 - 20) + 20,
+          humedad: Math.random() * (70 - 60) + 60,
+          luminosidad: Math.random() * (85 - 70) + 70,
+          ph: Math.random() * (6.5 - 5.5) + 5.5,
+          conductividad: Math.random() * (1.8 - 1.2) + 1.2
+        });
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error fetching data:', error);
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleSave = () => {
@@ -256,16 +289,23 @@ const ControlSensores: React.FC = () => {
     // Aquí puedes agregar la lógica para calibrar el sensor
   };
 
+  const handleConnectSensor = (sensor: string) => {
+    setConnectedSensors(prev => ({
+      ...prev,
+      [sensor]: !prev[sensor]
+    }));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-4 sm:p-8">
       <SideMenu isOpen={isSideMenuOpen} onClose={() => setIsSideMenuOpen(false)} user={null} />
       
       <div className="flex justify-between items-center mb-8">
         <button onClick={() => setIsSideMenuOpen(true)} className="text-gray-600">
           <Menu size={24} />
         </button>
-        <h1 className="text-3xl font-bold text-green-700">Control de Sensores</h1>
-        <div className="flex gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Control de Sensores</h1>
+        <div className="flex gap-2 sm:gap-4">
           <Button onClick={fetchData} variant="outline" className="flex items-center gap-2">
             <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
             {loading ? 'Actualizando...' : 'Actualizar'}
@@ -288,7 +328,7 @@ const ControlSensores: React.FC = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <SensorCard
           icon={<Thermometer className="w-6 h-6 text-orange-500" />}
           label="Temperatura"
@@ -298,6 +338,8 @@ const ControlSensores: React.FC = () => {
           alertEnabled={alertas.temperatura.enabled}
           onToggleAlert={() => handleToggleAlert('temperatura')}
           onCalibrate={() => handleCalibrate('temperatura')}
+          isConnected={connectedSensors.temperatura}
+          onConnect={() => handleConnectSensor('temperatura')}
         />
         <SensorCard
           icon={<Droplets className="w-6 h-6 text-blue-500" />}
@@ -308,6 +350,8 @@ const ControlSensores: React.FC = () => {
           alertEnabled={alertas.humedad.enabled}
           onToggleAlert={() => handleToggleAlert('humedad')}
           onCalibrate={() => handleCalibrate('humedad')}
+          isConnected={connectedSensors.humedad}
+          onConnect={() => handleConnectSensor('humedad')}
         />
         <SensorCard
           icon={<Sun className="w-6 h-6 text-yellow-500" />}
@@ -318,6 +362,8 @@ const ControlSensores: React.FC = () => {
           alertEnabled={alertas.luminosidad.enabled}
           onToggleAlert={() => handleToggleAlert('luminosidad')}
           onCalibrate={() => handleCalibrate('luminosidad')}
+          isConnected={connectedSensors.luminosidad}
+          onConnect={() => handleConnectSensor('luminosidad')}
         />
         <SensorCard
           icon={<Zap className="w-6 h-6 text-purple-500" />}
@@ -328,6 +374,8 @@ const ControlSensores: React.FC = () => {
           alertEnabled={alertas.ph.enabled}
           onToggleAlert={() => handleToggleAlert('ph')}
           onCalibrate={() => handleCalibrate('ph')}
+          isConnected={connectedSensors.ph}
+          onConnect={() => handleConnectSensor('ph')}
         />
         <SensorCard
           icon={<Sun className="w-6 h-6 text-green-500" />}
@@ -338,6 +386,8 @@ const ControlSensores: React.FC = () => {
           alertEnabled={alertas.conductividad.enabled}
           onToggleAlert={() => handleToggleAlert('conductividad')}
           onCalibrate={() => handleCalibrate('conductividad')}
+          isConnected={connectedSensors.conductividad}
+          onConnect={() => handleConnectSensor('conductividad')}
         />
       </div>
     </div>

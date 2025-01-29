@@ -227,7 +227,6 @@ const SensorCard: React.FC<SensorCardProps> = ({
   );
 };
 
-// Componente principal ControlSensores
 const ControlSensores: React.FC = () => {
   const [cultivo, setCultivo] = useState<string>('lechuga');
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);

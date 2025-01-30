@@ -37,8 +37,6 @@
     "react-calendar": "^5.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.3.1",
-    "react-horizontal-timeline": "^1.5.3",
-    "react-vis-timeline": "^2.0.3",
     "recharts": "^2.12.7",
     "sharp": "^0.33.5",
     "swr": "^2.2.5",

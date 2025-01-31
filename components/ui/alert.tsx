@@ -29,3 +29,8 @@ interface AlertDescriptionProps {
 export const AlertDescription: React.FC<AlertDescriptionProps> = ({ children }) => {
   return <p className="mt-2">{children}</p>;
 };
+
+
+export const AlertTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h4 className="font-semibold">{children}</h4>
+);

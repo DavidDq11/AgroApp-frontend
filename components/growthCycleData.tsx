@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Leaf, Sprout, Clock, Menu, RefreshCw, Droplets, AlertTriangle, CalendarIcon } from 'lucide-react';
+import {Leaf, Sprout, Clock, Menu, RefreshCw, Droplets, AlertTriangle, CalendarIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { 
@@ -13,7 +13,10 @@ import {
 } from './ui/alert-dialog';
 import SideMenu from '../components/SideMenu';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import EnhancedCropCalendar from './ui/CalendarComponent';
+import { Calendar } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+
 
 // Tipos mejorados
 type CultivationType = 'soil' | 'hydroponic';
@@ -53,7 +56,7 @@ type CropData = {
 };
 
 // Datos de cultivos mejorados
-const growthCycleData: { [key: string]: CropData } = {
+export const growthCycleData: { [key: string]: CropData } = {
   'Tomate Cherry': {
     duration: 65,
     cultivationType: 'hydroponic',
@@ -63,10 +66,9 @@ const growthCycleData: { [key: string]: CropData } = {
         days: '5-10',
         tasks: [
           'Mantener temperatura 20-25°C',
-          'Humedad alta (80-90%)',
+          'Controlar humedad al 80-90%',
           'Verificar EC 1.0-1.2 mS/cm',
-          'Monitorear pH 5.5-6.0',
-          'Asegurar oxigenación del agua'
+          'Monitorear pH 5.5-6.0'
         ],
         sensorRanges: {
           temperature: { min: 20, max: 25, unit: '°C' },
@@ -78,7 +80,63 @@ const growthCycleData: { [key: string]: CropData } = {
           do: { min: 5, max: 6, unit: 'mg/L' }
         }
       },
-      // ... otras etapas con sus rangos específicos
+      {
+        name: 'Desarrollo Vegetativo',
+        days: '20-30',
+        tasks: [
+          'Aumentar nutrientes',
+          'Mantener buena circulación de aire',
+          'Verificar crecimiento de raíces',
+          'Ajustar iluminación'
+        ],
+        sensorRanges: {
+          temperature: { min: 22, max: 26, unit: '°C' },
+          humidity: { min: 60, max: 70, unit: '%' },
+          light: { min: 16, max: 18, unit: 'horas' },
+          ph: { min: 5.8, max: 6.3, unit: 'pH' },
+          ec: { min: 1.5, max: 2.0, unit: 'mS/cm' },
+          tds: { min: 700, max: 900, unit: 'ppm' },
+          do: { min: 5, max: 6, unit: 'mg/L' }
+        }
+      },
+      {
+        name: 'Floración',
+        days: '20-25',
+        tasks: [
+          'Reducir nitrógeno',
+          'Aumentar fósforo y potasio',
+          'Controlar polinización',
+          'Monitorear formación de frutos'
+        ],
+        sensorRanges: {
+          temperature: { min: 20, max: 24, unit: '°C' },
+          humidity: { min: 50, max: 60, unit: '%' },
+          light: { min: 12, max: 14, unit: 'horas' },
+          ph: { min: 6.0, max: 6.5, unit: 'pH' },
+          ec: { min: 2.0, max: 2.5, unit: 'mS/cm' },
+          tds: { min: 1000, max: 1200, unit: 'ppm' },
+          do: { min: 5, max: 6, unit: 'mg/L' }
+        }
+      },
+      {
+        name: 'Cosecha',
+        days: '10-15',
+        tasks: [
+          'Verificar madurez de frutos',
+          'Preparar herramientas de cosecha',
+          'Limpiar área de cultivo',
+          'Documentar rendimiento'
+        ],
+        sensorRanges: {
+          temperature: { min: 18, max: 22, unit: '°C' },
+          humidity: { min: 50, max: 55, unit: '%' },
+          light: { min: 10, max: 12, unit: 'horas' },
+          ph: { min: 6.2, max: 6.8, unit: 'pH' },
+          ec: { min: 2.2, max: 2.8, unit: 'mS/cm' },
+          tds: { min: 1100, max: 1300, unit: 'ppm' },
+          do: { min: 5, max: 6, unit: 'mg/L' }
+        }
+      }
     ],
     sensorRanges: {
       temperature: { min: 20, max: 26, unit: '°C' },
@@ -89,8 +147,7 @@ const growthCycleData: { [key: string]: CropData } = {
       tds: { min: 1000, max: 1750, unit: 'ppm' },
       do: { min: 5, max: 6, unit: 'mg/L' }
     }
-  },
-  // ... otros cultivos
+  }
 };
 
 const CropPlanningModule: React.FC = () => {
@@ -197,32 +254,32 @@ const CropPlanningModule: React.FC = () => {
           </button>
           <h1 className="text-3xl font-bold text-green-700">Planificación de Cultivos</h1>
           <div className="flex gap-2">
-          <Button variant="outline" onClick={toggleCalendar}>
+            <Button variant="outline" onClick={toggleCalendar}>
               <CalendarIcon size={20} className="mr-2" />
               Calendario
             </Button>
-            <Button className="bg-green-500 hover:bg-green-600">
-              <RefreshCw size={20} className="mr-2" />
-              Actualizar
-            </Button>
+
+            {showCalendar && (
+              <Card className="absolute top-16 right-0 z-50 bg-white shadow-lg p-4 rounded-lg">
+                <CardHeader>
+                  <CardTitle>Selecciona una fecha</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Calendar
+                    onChange={((value: Date | Date[], event?: Event) => {
+                      if (value instanceof Date) {
+                        console.log('Fecha seleccionada:', value);
+                      }
+                    }) as any}
+                    value={new Date()}
+                    locale="es-ES"
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
-
-        {/* Mostrar calendario si showCalendar es true */}
-        {showCalendar && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Calendario</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full">
-                <Calendar />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Selector de cultivo */}
+        { }
         <div className="flex items-center gap-4">
           <select
             value={selectedCrop}

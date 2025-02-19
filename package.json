@@ -27,6 +27,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.1.8",
     "express": "^4.21.0",
+    "framer-motion": "^12.4.4",
     "howler": "^2.2.4",
     "jose": "^5.9.3",
     "jsonwebtoken": "^9.0.2",

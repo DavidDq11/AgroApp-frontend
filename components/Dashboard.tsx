@@ -54,26 +54,26 @@ const Dashboard = () => {
         setTimeout(() => {
           const mockUser = { name: 'Juan Pérez', email: 'juan.perez@example.com' };
           const mockCultivos: CultivoData[] = [
-            { 
-              id: 1, 
-              nombre: 'Lechuga', 
-              tipo: 'Hidroponía NFT', 
-              estado: 'En crecimiento', 
-              diasRestantes: 15, 
-              temperatura: 24, 
-              humedad: 65, 
-              luminosidad: 80, 
+            {
+              id: 1,
+              nombre: 'Lechuga',
+              tipo: 'Hidroponía NFT',
+              estado: 'En crecimiento',
+              diasRestantes: 15,
+              temperatura: 24,
+              humedad: 65,
+              luminosidad: 80,
               invernadero: 'Invernadero A'
             },
-            { 
-              id: 2, 
-              nombre: 'Tomate', 
-              tipo: 'Raíz flotante', 
-              estado: 'Germinación', 
-              diasRestantes: 30, 
-              temperatura: 22, 
-              humedad: 70, 
-              luminosidad: 75, 
+            {
+              id: 2,
+              nombre: 'Tomate',
+              tipo: 'Raíz flotante',
+              estado: 'Germinación',
+              diasRestantes: 30,
+              temperatura: 22,
+              humedad: 70,
+              luminosidad: 75,
               invernadero: 'Invernadero B'
             },
           ];
@@ -142,71 +142,102 @@ const Dashboard = () => {
           </p>
 
           {/* Si hay un cultivo seleccionado, mostrar detalles */}
-          {selectedCultivo ? (
+          {selectedCultivo && (
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-semibold text-gray-800">{selectedCultivo.nombre}</h3>
-                <button 
+                <h3 className="text-3xl font-bold text-green-800">{selectedCultivo.nombre}</h3>
+                <button
                   className="text-gray-500 hover:text-red-500 transition"
                   onClick={handleBackToList}>
-                  Volver
+                  <span className="text-xl">← Volver</span>
                 </button>
               </div>
-              <p><strong>Tipo:</strong> {selectedCultivo.tipo}</p>
-              <p><strong>Estado:</strong> {selectedCultivo.estado}</p>
-              <p><strong>Temperatura:</strong> {selectedCultivo.temperatura}°C</p>
-              <p><strong>Humedad:</strong> {selectedCultivo.humedad}%</p>
-              <p><strong>Luminosidad:</strong> {selectedCultivo.luminosidad}%</p>
-              <p><strong>Invernadero:</strong> {selectedCultivo.invernadero}</p>
-              <p><strong>Fecha de Siembra:</strong> {new Date().toLocaleDateString()}</p>
-              <p><strong>Fecha Estimada de Cosecha:</strong> {new Date(Date.now() + selectedCultivo.diasRestantes * 86400000).toLocaleDateString()}</p>
-              
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-green-700">Condiciones Ideales</h3>
-                <p><strong>Temperatura Ideal:</strong> 22-26°C</p>
-                <p><strong>Humedad Ideal:</strong> 60-75%</p>
-                <p><strong>Luminosidad Ideal:</strong> 70-85%</p>
+
+              {/* Cultivo Overview */}
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-green-50 text-green-800 p-4 rounded-lg shadow-sm">
+                    <p className="text-lg font-semibold">Tipo:</p>
+                    <p>{selectedCultivo.tipo}</p>
+                  </div>
+                  <div className="bg-green-50 text-green-800 p-4 rounded-lg shadow-sm">
+                    <p className="text-lg font-semibold">Estado:</p>
+                    <p>{selectedCultivo.estado}</p>
+                  </div>
+                  <div className="bg-green-50 text-green-800 p-4 rounded-lg shadow-sm">
+                    <p className="text-lg font-semibold">Días Restantes:</p>
+                    <p>{selectedCultivo.diasRestantes}</p>
+                  </div>
+                  <div className="bg-green-50 text-green-800 p-4 rounded-lg shadow-sm">
+                    <p className="text-lg font-semibold">Invernadero:</p>
+                    <p>{selectedCultivo.invernadero}</p>
+                  </div>
+                </div>
               </div>
-              
+
+              {/* Environmental Conditions */}
+              <div className="mb-6 grid grid-cols-3 gap-4">
+                {[
+                  { label: 'Temperatura', value: `${selectedCultivo.temperatura}°C`, ideal: '22-26°C' },
+                  { label: 'Humedad', value: `${selectedCultivo.humedad}%`, ideal: '60-75%' },
+                  { label: 'Luminosidad', value: `${selectedCultivo.luminosidad}%`, ideal: '70-85%' },
+                ].map((item, index) => (
+                  <div key={index} className="bg-green-100 text-green-800 p-4 rounded-lg shadow-sm">
+                    <p className="text-lg font-semibold">{item.label}</p>
+                    <p className="text-2xl">{item.value}</p>
+                    <p className="text-sm text-gray-600">Ideal: {item.ideal}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Cultivation Timeline */}
+              <div className="mb-6">
+                <h4 className="text-xl font-semibold text-green-700 mb-2">Cronología del Cultivo</h4>
+                <p><strong>Fecha de Siembra:</strong> {new Date().toLocaleDateString()}</p>
+                <p><strong>Fecha Estimada de Cosecha:</strong> {new Date(Date.now() + selectedCultivo.diasRestantes * 86400000).toLocaleDateString()}</p>
+              </div>
+
+              {/* Notes Section */}
               <div className="mt-4">
-                <h3 className="text-lg font-semibold text-green-700">Notas del Cultivo</h3>
+                <h3 className="text-xl font-semibold text-green-700 mb-2">Notas del Cultivo</h3>
                 <textarea
                   className="w-full p-3 border border-green-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300"
                   placeholder="Agregar notas sobre el cultivo..."
                   value={notas}
                   onChange={handleNotaChange}
+                  rows={3}
                 />
               </div>
             </div>
-          ) : (
-            <div className="bg-white p-8 rounded-lg shadow-lg">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-semibold text-gray-800">Tus Cultivos</h3>
-                <button onClick={abrirModal} className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300">
-                  Añadir Nuevo
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cultivos.map((cultivo) => (
-                  <GreenhouseCard 
-                    key={cultivo.id} 
-                    id={cultivo.id} 
-                    cultivoData={cultivo} 
-                    onClick={() => handleCultivoSelect(cultivo)} // Maneja la selección del cultivo
-                  />
-                ))}
-              </div>
-            </div>
           )}
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-semibold text-gray-800">Tus Cultivos</h3>
+              <button onClick={abrirModal} className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300">
+                Añadir Nuevo
+              </button>
+            </div>
 
-<button 
-          className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2 hover:bg-green-200 transition duration-300"
-          onClick={handleVerEstadisticas} // Agrega el manejador de eventos aquí
-        >
-          <BarChart2 size={20} />
-          Ver historial y estadísticas →
-        </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {cultivos.map((cultivo) => (
+                <GreenhouseCard
+                  key={cultivo.id}
+                  id={cultivo.id}
+                  cultivoData={cultivo}
+                  onClick={() => handleCultivoSelect(cultivo)} // Maneja la selección del cultivo
+                />
+              ))}
+            </div>
+          </div>
+
+
+          <button
+            className="mt-8 bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2 hover:bg-green-200 transition duration-300"
+            onClick={handleVerEstadisticas} // Agrega el manejador de eventos aquí
+          >
+            <BarChart2 size={20} />
+            Ver historial y estadísticas →
+          </button>
         </main>
       </div>
 

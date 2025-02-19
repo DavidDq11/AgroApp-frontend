@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Calendar, Droplets, Thermometer, Plus, ChevronRight, Sun, X } from 'lucide-react';
 import SideMenu from './SideMenu';
 import { Menu } from 'lucide-react';
@@ -80,12 +80,12 @@ const MisCultivos: React.FC = () => {
   const [selectedCultivo, setSelectedCultivo] = useState<Cultivo | null>(null);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notas, setNotas] = useState<string>(''); // Estado para las notas
+  const [notas, setNotas] = useState<string>('');
 
-  const toggleSideMenu = () => setIsSideMenuOpen(!isSideMenuOpen);
-  const abrirModal = () => setIsModalOpen(true);
-  const cerrarModal = () => setIsModalOpen(false);
-  const cerrarDetalle = () => setSelectedCultivo(null);
+  const toggleSideMenu = useCallback(() => setIsSideMenuOpen(!isSideMenuOpen), [isSideMenuOpen]);
+  const abrirModal = useCallback(() => setIsModalOpen(true), []);
+  const cerrarModal = useCallback(() => setIsModalOpen(false), []);
+  const cerrarDetalle = useCallback(() => setSelectedCultivo(null), []);
 
   const cultivos: Cultivo[] = [
     {
@@ -113,33 +113,33 @@ const MisCultivos: React.FC = () => {
   ];
 
   const chartData = {
-    labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'], // Simula días
+    labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'],
     datasets: [
       {
         label: 'Temperatura',
-        data: [22, 23, 24, 23, 22], // Simula temperatura
+        data: [22, 23, 24, 23, 22],
         borderColor: 'rgba(255, 99, 132, 1)',
         fill: false,
       },
       {
         label: 'Humedad',
-        data: [60, 62, 65, 68, 70], // Simula humedad
+        data: [60, 62, 65, 68, 70],
         borderColor: 'rgba(54, 162, 235, 1)',
         fill: false,
       },
       {
         label: 'Luminosidad',
-        data: [75, 80, 82, 85, 90], // Simula luminosidad
+        data: [75, 80, 82, 85, 90],
         borderColor: 'rgba(255, 205, 86, 1)',
         fill: false,
       },
     ],
   };
 
-  const handleNotaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleNotaChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNotas(event.target.value);
     // Aquí podrías hacer una llamada para guardar las notas (por ejemplo, en una base de datos)
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-8 flex">
@@ -171,19 +171,23 @@ const MisCultivos: React.FC = () => {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <p><strong>Tipo:</strong> {selectedCultivo.tipo}</p>
-            <p><strong>Estado:</strong> {selectedCultivo.estado}</p>
-            <p><strong>Temperatura:</strong> {selectedCultivo.temperatura}°C</p>
-            <p><strong>Humedad:</strong> {selectedCultivo.humedad}%</p>
-            <p><strong>Luminosidad:</strong> {selectedCultivo.luminosidad}%</p>
-            <p><strong>Invernadero:</strong> {selectedCultivo.invernadero}</p>
-            <p><strong>Fecha de Siembra:</strong> {new Date().toLocaleDateString()}</p>
-            <p><strong>Fecha Estimada de Cosecha:</strong> {new Date(Date.now() + selectedCultivo.diasRestantes * 86400000).toLocaleDateString()}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <p><strong>Tipo:</strong> {selectedCultivo.tipo}</p>
+              <p><strong>Estado:</strong> {selectedCultivo.estado}</p>
+              <p><strong>Temperatura:</strong> {selectedCultivo.temperatura}°C</p>
+              <p><strong>Humedad:</strong> {selectedCultivo.humedad}%</p>
+              <p><strong>Luminosidad:</strong> {selectedCultivo.luminosidad}%</p>
+              <p><strong>Invernadero:</strong> {selectedCultivo.invernadero}</p>
+              <p><strong>Fecha de Siembra:</strong> {new Date().toLocaleDateString()}</p>
+              <p><strong>Fecha Estimada de Cosecha:</strong> {new Date(Date.now() + selectedCultivo.diasRestantes * 86400000).toLocaleDateString()}</p>
+            </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold text-green-700">Condiciones Ideales</h3>
-              <p><strong>Temperatura Ideal:</strong> 22-26°C</p>
-              <p><strong>Humedad Ideal:</strong> 60-75%</p>
-              <p><strong>Luminosidad Ideal:</strong> 70-85%</p>
+              <ul>
+                <li><strong>Temperatura Ideal:</strong> 22-26°C</li>
+                <li><strong>Humedad Ideal:</strong> 60-75%</li>
+                <li><strong>Luminosidad Ideal:</strong> 70-85%</li>
+              </ul>
             </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold text-green-700">Notas del Cultivo</h3>
@@ -192,7 +196,7 @@ const MisCultivos: React.FC = () => {
                 placeholder="Agregar notas sobre el cultivo..."
                 value={notas}
                 onChange={handleNotaChange}
-                onBlur={handleNotaChange} // Guarda automáticamente cuando el campo pierde el foco
+                onBlur={handleNotaChange}
               />
             </div>
             <div className="mt-6">
